@@ -3,7 +3,9 @@ package com.josephhieu.userservice.controller;
 import com.josephhieu.userservice.dto.UserDto;
 import com.josephhieu.userservice.model.User;
 import com.josephhieu.userservice.repository.UserRepository;
+import com.josephhieu.userservice.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,6 +16,12 @@ import java.util.List;
 public class UserController {
 
     private final UserRepository userRepository;
+    private final UserService userService;
+
+    @GetMapping
+    public List<User> getUsers() {
+        return userService.getAllUsers();
+    }
 
     @GetMapping("/{id}")
     public UserDto getUserById(@PathVariable Long id) {
@@ -23,12 +31,8 @@ public class UserController {
     }
 
     @PostMapping
+    @CacheEvict(value = "allUsers", allEntries = true)
     public User createUser(@RequestBody User user) {
         return userRepository.save(user);
-    }
-
-    @GetMapping
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
     }
 }
