@@ -15,7 +15,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserController {
 
-    private final UserRepository userRepository;
     private final UserService userService;
 
     @GetMapping
@@ -24,15 +23,38 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public UserDto getUserById(@PathVariable Long id) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        return new UserDto(user.getId(), user.getName(), user.getEmail());
+    public User getUserById(@PathVariable Long id) {
+        User user = userService.getUserById(id);
+
+        if (user == null) {
+            throw new RuntimeException("User not found");
+        }
+
+        return user;
     }
 
+//    @GetMapping("/{id}")
+//    public UserDto getUserById(@PathVariable Long id) {
+//        User user = userRepository.findById(id)
+//                .orElseThrow(() -> new RuntimeException("User not found"));
+//        return new UserDto(user.getId(), user.getName(), user.getEmail());
+//    }
+
     @PostMapping
-    @CacheEvict(value = "allUsers", allEntries = true)
+//    @CacheEvict(value = "allUsers", allEntries = true)
     public User createUser(@RequestBody User user) {
-        return userRepository.save(user);
+        return userService.createUser(user);
+    }
+
+    @PutMapping("/{id}")
+//    @CacheEvict(value = "allUsers", allEntries = true)
+    public User updateUser(@PathVariable Long id, @RequestBody User user) {
+        return userService.updateUser(id, user);
+    }
+
+    @DeleteMapping("/{id}")
+//    @CacheEvict(value = "allUsers", allEntries = true)
+    public boolean deleteUser(@PathVariable Long id) {
+        return userService.deleteUser(id);
     }
 }
