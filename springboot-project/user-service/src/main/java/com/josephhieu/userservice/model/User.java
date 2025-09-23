@@ -17,5 +17,15 @@ public class User implements Serializable {
     private Long id;
 
     private String name;
+
+    @Column(unique = true, nullable = false)
     private String email;
+
+    private String password;
+
+    private String address;
+
+    private String phone;
+
+    private String role; // User, Admin
 }
